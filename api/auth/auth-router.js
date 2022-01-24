@@ -1,7 +1,33 @@
+const router = require('express').Router()
+const User = require('../users/users-model')
 // Require `checkUsernameFree`, `checkUsernameExists` and `checkPasswordLength`
 // middleware functions from `auth-middleware.js`. You will need them here!
 
+router.post('/register', async (req, res, next) {
+  console.log("starting to register")
+  const {username, password} = req.body
+  const user = await User.add({username, password })
+  const newUser = { 
+    user_id: user.user_id, 
+    username: user.username 
+  }
+  res.status(200).json(newUser) 
+})
 
+router.post('/login', async(req, res, next) {
+  console.log("starting to login")
+
+  const {username, password} = req.body
+
+  res.status(200).json(newUser) 
+})
+
+router.get('/logout', (req, res, next) {
+  console.log("starting to logout")
+  res.status(200).json({ message: 'logged out'}) 
+
+
+})
 /**
   1 [POST] /api/auth/register { "username": "sue", "password": "1234" }
 

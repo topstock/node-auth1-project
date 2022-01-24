@@ -6,8 +6,14 @@
     "message": "You shall not pass!"
   }
 */
-function restricted() {
-
+function restricted(req, res, next) {
+    console.log('restricted endpoint')
+    res.status(401).json(  {
+      "message": "You shall not pass!"
+    })
+  }
+  
+  module.exports = protect
 }
 
 /*
