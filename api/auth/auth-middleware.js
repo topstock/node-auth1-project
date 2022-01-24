@@ -6,6 +6,7 @@
     "message": "You shall not pass!"
   }
 */
+
 function restricted(req, res, next) {
     console.log('restricted endpoint')
     res.status(401).json({
@@ -54,5 +55,6 @@ function checkPasswordLength() {
 module.exports = { 
   checkUsernameFree, 
   checkUsernameExists,
-  checkPasswordLength
+  checkPasswordLength,
+  restricted
 }

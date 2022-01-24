@@ -1,4 +1,4 @@
-const router = require('express').Router()
+const authRouter = require('express').Router()
 const User = require('../users/users-model')
 const {
   checkUsernameFree, 
@@ -9,7 +9,7 @@ const {
 // middleware functions from `auth-middleware.js`. You will need them here!
 
 
-router.post('/register', async (req, res, next) => {
+authRouter.post('/register', async (req, res, next) => {
   console.log("starting to register")
   const {username, password} = req.body
   const user = await User.add({username, password })
@@ -20,7 +20,7 @@ router.post('/register', async (req, res, next) => {
   res.status(200).json(newUser) 
 })
 
-router.post('/login', async(req, res, next) => {
+authRouter.post('/login', async(req, res, next) => {
   console.log("starting to login")
 
   const {username, password} = req.body
@@ -36,7 +36,7 @@ router.post('/login', async(req, res, next) => {
     .catch( err => next() )
 })
 
-router.get('/logout', (req, res, next) => {
+authRouter.get('/logout', (req, res, next) => {
   console.log("starting to logout")
   res.status(200).json({ message: 'logged out'})
 })
@@ -98,5 +98,5 @@ router.get('/logout', (req, res, next) => {
  */
 
  
-// Don't forget to add the router to the `exports` object so it can be required in other modules
-module.exports = router;
+// Don't forget to add the authRouter to the `exports` object so it can be required in other modules
+module.exports = authRouter;
