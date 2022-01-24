@@ -19,11 +19,22 @@ const session = require("express-session")
 
 const server = express();
 
+const sessionConfig = {
+  name: "mulberry",
+  secret: "what would you do?",
+  cookie: {
+    maxAge: 1000 * 60,
+    secure: false,
+    httpOnly: true,
+  },
+  resave: false, // do we want to ecreate a session even if it hasn't changed?
+  saveUninitialized: false, //GDPR laws against automatically  setting cookises
+}
 
 server.use(helmet());
 server.use(express.json());
 server.use(cors());
-
+server.use(session(sessionConfig))
 server.use('/api/users', usersRouter)
 server.use('/api/auth', authRouter)
 

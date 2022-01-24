@@ -8,13 +8,11 @@
 */
 function restricted(req, res, next) {
     console.log('restricted endpoint')
-    res.status(401).json(  {
+    res.status(401).json({
       "message": "You shall not pass!"
     })
-  }
-  
-  module.exports = protect
 }
+
 
 /*
   If the username in req.body already exists in the database
@@ -53,3 +51,8 @@ function checkPasswordLength() {
 }
 
 // Don't forget to add these to the `exports` object so they can be required in other modules
+module.exports = { 
+  checkUsernameFree, 
+  checkUsernameExists,
+  checkPasswordLength
+}

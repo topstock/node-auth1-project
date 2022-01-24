@@ -1,9 +1,15 @@
 const router = require('express').Router()
 const User = require('../users/users-model')
+const {
+  checkUsernameFree, 
+  checkUsernameExists,
+  checkPasswordLength
+} = require('./auth-middleware')
 // Require `checkUsernameFree`, `checkUsernameExists` and `checkPasswordLength`
 // middleware functions from `auth-middleware.js`. You will need them here!
 
-router.post('/register', async (req, res, next) {
+
+router.post('/register', async (req, res, next) => {
   console.log("starting to register")
   const {username, password} = req.body
   const user = await User.add({username, password })
@@ -14,19 +20,25 @@ router.post('/register', async (req, res, next) {
   res.status(200).json(newUser) 
 })
 
-router.post('/login', async(req, res, next) {
+router.post('/login', async(req, res, next) => {
   console.log("starting to login")
 
   const {username, password} = req.body
-
-  res.status(200).json(newUser) 
+  User.findBy({ username })
+    .then( user => {
+      const { user_id, username} = user
+      if (!user_id || !username) {
+        res.status(200).json(user)  
+      } else { 
+        res.status(404).json
+      } 
+    })
+    .catch( err => next() )
 })
 
-router.get('/logout', (req, res, next) {
+router.get('/logout', (req, res, next) => {
   console.log("starting to logout")
-  res.status(200).json({ message: 'logged out'}) 
-
-
+  res.status(200).json({ message: 'logged out'})
 })
 /**
   1 [POST] /api/auth/register { "username": "sue", "password": "1234" }
@@ -87,3 +99,4 @@ router.get('/logout', (req, res, next) {
 
  
 // Don't forget to add the router to the `exports` object so it can be required in other modules
+module.exports = router;
