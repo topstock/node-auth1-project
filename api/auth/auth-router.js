@@ -1,5 +1,6 @@
 const authRouter = require('express').Router()
 const User = require('../users/users-model')
+const bcrypt = require('bcryptjs')
 const {
   checkUsernameFree, 
   checkUsernameExists,
@@ -16,14 +17,16 @@ authRouter.post(
   async (req, res, next) => {
     try {
     const {username, password} = req.body
-    const user = await User.add({username, password })
+    const hash = bcrypt.hashSync(password, 8) // 2^10
+    const user = await User.add({username, password: hash })
+
     console.log('User Added')
 
     const newUser = { 
       user_id: user.user_id, 
       username: user.username 
     }
-    res.status(200).json(newUser) 
+    res.status(201).json(newUser) 
   } catch (err) {
     next(err)
   }
