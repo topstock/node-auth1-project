@@ -4,6 +4,8 @@ const cors = require("cors");
 const usersRouter = require("./users/users-router")
 const authRouter = require("./auth/auth-router")
 const session = require("express-session")
+const store = require('connect-session-knex')(session)
+const knex = require('knex')
 /**
   Do what needs to be done to support sessions with the `express-session` package!
   To respect users' privacy, do NOT send them a cookie unless they log in.
@@ -19,17 +21,25 @@ const session = require("express-session")
 
 const server = express();
 
-const sessionConfig = {
-  name: "mulberry",
-  secret: "what would you do?",
-  cookie: {
-    maxAge: 1000 * 60,
-    secure: false,
-    httpOnly: true,
-  },
+server.use(session({
+  name: "chocolatechip",
+  secret: "shh",
   resave: false, // do we want to ecreate a session even if it hasn't changed?
   saveUninitialized: false, //GDPR laws against automatically  setting cookises
-}
+  store: new Store({
+    knex,
+    createTable: true,
+    clearInterval: 1000 * 60 * 10,
+    tablename: 'sessions',
+    sidfieldname: 'sid',
+  }),
+  cookie: {
+    maxAge: 1000 * 60 * 10,
+    secure: false,
+    httpOnly: true,
+    sameSite: '' // there have been very recent changes in how browser treats 3rd party cookies. to enable us https and sameSite: 'none'
+  },
+}))
 
 server.use(helmet());
 server.use(express.json());
