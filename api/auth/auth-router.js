@@ -9,31 +9,41 @@ const {
 // middleware functions from `auth-middleware.js`. You will need them here!
 
 
-authRouter.post('/register', async (req, res, next) => {
-  console.log("starting to register")
-  const {username, password} = req.body
-  const user = await User.add({username, password })
-  const newUser = { 
-    user_id: user.user_id, 
-    username: user.username 
+authRouter.post(
+  '/register', 
+  checkUsernameFree,  
+  checkPasswordLength,
+  async (req, res, next) => {
+    try {
+    const {username, password} = req.body
+    const user = await User.add({username, password })
+    console.log('User Added')
+
+    const newUser = { 
+      user_id: user.user_id, 
+      username: user.username 
+    }
+    res.status(200).json(newUser) 
+  } catch (err) {
+    next(err)
   }
-  res.status(200).json(newUser) 
 })
 
-authRouter.post('/login', async(req, res, next) => {
+authRouter.post('/login', checkUsernameExists, async(req, res, next) => {
   console.log("starting to login")
-
-  const {username, password} = req.body
-  User.findBy({ username })
-    .then( user => {
-      const { user_id, username} = user
-      if (!user_id || !username) {
-        res.status(200).json(user)  
-      } else { 
-        res.status(404).json
-      } 
-    })
-    .catch( err => next() )
+  try {
+    const user = await User.findBy({ username: req.body.username })
+    const {username} = user
+    if (username !== undefined) {
+      res.status(200).json( {
+        "message": `Welcome ${user.username}!`
+      })  
+    } else { 
+      res.status(404).json({"message": "Invalid credentials"})
+    } 
+  } catch(err) { 
+    next(err) 
+  }
 })
 
 authRouter.get('/logout', (req, res, next) => {
